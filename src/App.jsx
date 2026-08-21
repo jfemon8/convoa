@@ -5,10 +5,7 @@ import GuestRoute from "./components/layout/GuestRoute";
 
 import LoginPage from "./pages/LoginPage";
 import ChatPage from "./pages/ChatPage";
-
-const CreateGroupPage = () => {
-  return <div>Create Group Page</div>;
-};
+import CreateGroupPage from "./pages/CreateGroupPage";
 
 const LandingPage = () => {
   return <div>Landing Page</div>;

@@ -49,3 +49,15 @@ export const sendMessage = async ({
 
     return response.data;
 };
+
+export const createGroupConversation = async ({
+    name,
+    participantIds,
+}) => {
+    const response = await api.post("/conversations/group", {
+        name,
+        participantIds,
+    });
+
+    return response.data;
+};
