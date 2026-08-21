@@ -6,10 +6,7 @@ import GuestRoute from "./components/layout/GuestRoute";
 import LoginPage from "./pages/LoginPage";
 import ChatPage from "./pages/ChatPage";
 import CreateGroupPage from "./pages/CreateGroupPage";
-
-const LandingPage = () => {
-  return <div>Landing Page</div>;
-};
+import LandingPage from "./pages/LandingPage";
 
 const App = () => {
   return (
@@ -26,7 +23,8 @@ const App = () => {
         <Route path="/groups/new" element={<CreateGroupPage />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/chat" replace />} />
+      <Route path="*" element={<Navigate to="/landing" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };
