@@ -7,9 +7,11 @@ import {
   searchUsers,
   startDirectConversation,
 } from "../../services/conversation.service";
+import { useAuth } from "../../context/AuthContext";
 
 const UserSearch = ({ onConversationCreated }) => {
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
@@ -17,7 +19,9 @@ const UserSearch = ({ onConversationCreated }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
-  const displayUsers = query.trim() ? users : [];
+  const displayUsers = query.trim()
+    ? users.filter((user) => String(user._id) !== String(currentUser?._id))
+    : [];
 
   useEffect(() => {
     const trimmedQuery = query.trim();
