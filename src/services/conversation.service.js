@@ -37,3 +37,15 @@ export const getConversationMessages = async (
 
     return response.data;
 };
+
+export const sendMessage = async ({
+    conversationId,
+    text,
+}) => {
+    const response = await api.post("/messages", {
+        conversationId,
+        text,
+    });
+
+    return response.data;
+};

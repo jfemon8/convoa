@@ -32,8 +32,6 @@ const useConversations = () => {
         let cancelled = false;
 
         const loadConversations = async () => {
-            setError(null);
-
             try {
                 const data = await getConversations();
 

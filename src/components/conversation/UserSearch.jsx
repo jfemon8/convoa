@@ -55,11 +55,10 @@ const UserSearch = ({ onConversationCreated }) => {
 
       const conversation = await startDirectConversation(user._id);
 
-      // Refresh conversation list
-      await onConversationCreated?.();
-
       setQuery("");
       setUsers([]);
+
+      await onConversationCreated?.();
 
       navigate(`/chat/${conversation._id}`);
     } catch (error) {

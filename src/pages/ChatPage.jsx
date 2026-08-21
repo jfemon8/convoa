@@ -1,19 +1,48 @@
+import { useMemo } from "react";
 import { MessageSquare } from "lucide-react";
+import { useParams } from "react-router";
+import { useCallback } from "react";
 
+import useChatSocket from "../hooks/useChatSocket";
 import ConversationList from "../components/conversation/ConversationList";
+import ConversationPanel from "../components/conversation/ConversationPanel";
 import UserSearch from "../components/conversation/UserSearch";
 import { useAuth } from "../context/AuthContext";
 import useConversations from "../hooks/useConversations";
 
 const ChatPage = () => {
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
+  const { conversationId } = useParams();
 
   const { conversations, isLoading, error, refetch } = useConversations();
+
+  const selectedConversation = useMemo(
+    () =>
+      conversations.find(
+        (conversation) => conversation._id === conversationId,
+      ) || null,
+    [conversations, conversationId],
+  );
+
+  const handleConversationUpdated = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  useChatSocket({
+    token,
+    conversationId,
+    onConversationUpdated: handleConversationUpdated,
+  });
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="mx-auto flex h-screen max-w-7xl overflow-hidden border-x border-slate-800">
-        <aside className="flex w-full max-w-sm flex-col border-r border-slate-800 bg-slate-900">
+        {/* Sidebar */}
+        <aside
+          className={`flex w-full max-w-sm shrink-0 flex-col border-r border-slate-800 bg-slate-900 ${
+            conversationId ? "hidden md:flex" : "flex"
+          }`}
+        >
           <header className="border-b border-slate-800 p-4">
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -44,22 +73,27 @@ const ChatPage = () => {
           </div>
         </aside>
 
-        <section className="hidden flex-1 items-center justify-center bg-slate-950 md:flex">
-          <div className="max-w-sm text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900">
-              <MessageSquare size={28} className="text-slate-500" />
+        {/* Conversation */}
+        {conversationId && selectedConversation ? (
+          <ConversationPanel conversation={selectedConversation} />
+        ) : (
+          <section className="hidden flex-1 items-center justify-center bg-slate-950 md:flex">
+            <div className="max-w-sm text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900">
+                <MessageSquare size={28} className="text-slate-500" />
+              </div>
+
+              <h2 className="mt-5 text-lg font-semibold">
+                Select a conversation
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Choose a conversation from the sidebar or search for someone to
+                start a new one.
+              </p>
             </div>
-
-            <h2 className="mt-5 text-lg font-semibold">
-              Select a conversation
-            </h2>
-
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              Choose a conversation from the sidebar or search for someone to
-              start a new one.
-            </p>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
     </main>
   );

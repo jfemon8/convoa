@@ -7,6 +7,10 @@ const ConversationList = ({ conversations, isLoading, error, onRetry }) => {
   const navigate = useNavigate();
   const { conversationId } = useParams();
 
+  const handleConversationClick = (conversation) => {
+    navigate(`/chat/${conversation._id}`);
+  };
+
   if (isLoading) {
     return (
       <div className="p-4">
@@ -30,7 +34,7 @@ const ConversationList = ({ conversations, isLoading, error, onRetry }) => {
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 rounded-lg bg-slate-700 px-4 py-2 text-sm text-white hover:bg-slate-600"
+          className="mt-4 rounded-lg bg-slate-700 px-4 py-2 text-sm text-white transition hover:bg-slate-600"
         >
           Try again
         </button>
@@ -55,13 +59,13 @@ const ConversationList = ({ conversations, isLoading, error, onRetry }) => {
   }
 
   return (
-    <div className="overflow-y-auto">
+    <div className="h-full overflow-y-auto">
       {conversations.map((conversation) => (
         <ConversationItem
           key={conversation._id}
           conversation={conversation}
           isActive={conversation._id === conversationId}
-          onClick={() => navigate(`/chat/${conversation._id}`)}
+          onClick={() => handleConversationClick(conversation)}
         />
       ))}
     </div>
