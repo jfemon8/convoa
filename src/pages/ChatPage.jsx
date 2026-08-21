@@ -1,17 +1,16 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { MessageSquare } from "lucide-react";
 import { useParams } from "react-router";
-import { useCallback } from "react";
 
-import useChatSocket from "../hooks/useChatSocket";
 import ConversationList from "../components/conversation/ConversationList";
 import ConversationPanel from "../components/conversation/ConversationPanel";
 import UserSearch from "../components/conversation/UserSearch";
 import { useAuth } from "../context/AuthContext";
 import useConversations from "../hooks/useConversations";
+import { useSocket } from "../context/useSocket";
 
 const ChatPage = () => {
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { conversationId } = useParams();
 
   const { conversations, isLoading, error, refetch } = useConversations();
@@ -24,15 +23,23 @@ const ChatPage = () => {
     [conversations, conversationId],
   );
 
+  const socket = useSocket();
+
   const handleConversationUpdated = useCallback(() => {
     refetch();
   }, [refetch]);
 
-  useChatSocket({
-    token,
-    conversationId,
-    onConversationUpdated: handleConversationUpdated,
-  });
+  useEffect(() => {
+    if (!socket) {
+      return undefined;
+    }
+
+    socket.on("conversation:updated", handleConversationUpdated);
+
+    return () => {
+      socket.off("conversation:updated", handleConversationUpdated);
+    };
+  }, [socket, handleConversationUpdated]);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">

@@ -1,6 +1,5 @@
 import { MessageCircle } from "lucide-react";
-import { useCallback } from "react";
-import useChatSocket from "../../hooks/useChatSocket";
+import { useCallback, useEffect } from "react";
 
 import { useAuth } from "../../context/AuthContext";
 import useConversationMessages from "../../hooks/useConversationMessages";
@@ -8,9 +7,10 @@ import MessageInput from "./MessageInput";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import MessageList from "./MessageList";
+import { useSocket } from "../../context/useSocket";
 
 const ConversationPanel = ({ conversation }) => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const conversationId = conversation?._id;
 
@@ -45,18 +45,27 @@ const ConversationPanel = ({ conversation }) => {
     [addMessage],
   );
 
-  const handleNewMessage = useCallback(
-    (message) => {
-      addMessage(message);
-    },
-    [addMessage],
-  );
+  const socket = useSocket();
 
-  useChatSocket({
-    token,
-    conversationId,
-    onMessage: handleNewMessage,
-  });
+  useEffect(() => {
+    if (!socket || !conversationId) {
+      return undefined;
+    }
+
+    const handleNewMessage = (message) => {
+      if (message?.conversation !== conversationId) {
+        return;
+      }
+
+      addMessage(message);
+    };
+
+    socket.on("message:new", handleNewMessage);
+
+    return () => {
+      socket.off("message:new", handleNewMessage);
+    };
+  }, [socket, conversationId, addMessage]);
 
   if (!conversation) {
     return (
