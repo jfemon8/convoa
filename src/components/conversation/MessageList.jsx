@@ -1,11 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { ArrowDown, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
-const MessageList = ({ messages, currentUserId }) => {
+const AUTO_SCROLL_THRESHOLD = 120;
+const TOP_LOAD_THRESHOLD = 80;
+
+const MessageList = ({
+  messages,
+  currentUserId,
+  hasMore,
+  isLoadingOlder,
+  onLoadOlder,
+}) => {
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
 
-  const shouldAutoScrollRef = useRef(true);
+  const isInitialRenderRef = useRef(true);
+  const wasLoadingOlderRef = useRef(false);
+  const previousMessageCountRef = useRef(0);
+  const previousFirstMessageIdRef = useRef(null);
+
+  const scrollStateRef = useRef({
+    isNearBottom: true,
+    previousScrollHeight: 0,
+  });
+
+  const [showNewMessages, setShowNewMessages] = useState(false);
 
   const updateScrollState = () => {
     const container = containerRef.current;
@@ -17,23 +37,101 @@ const MessageList = ({ messages, currentUserId }) => {
     const distanceFromBottom =
       container.scrollHeight - container.scrollTop - container.clientHeight;
 
-    shouldAutoScrollRef.current = distanceFromBottom < 120;
+    scrollStateRef.current.isNearBottom =
+      distanceFromBottom <= AUTO_SCROLL_THRESHOLD;
+
+    if (scrollStateRef.current.isNearBottom) {
+      setShowNewMessages(false);
+    }
+
+    if (
+      container.scrollTop <= TOP_LOAD_THRESHOLD &&
+      hasMore &&
+      !isLoadingOlder
+    ) {
+      scrollStateRef.current.previousScrollHeight = container.scrollHeight;
+
+      wasLoadingOlderRef.current = true;
+
+      onLoadOlder?.();
+    }
   };
 
-  useEffect(() => {
-    if (shouldAutoScrollRef.current && bottomRef.current) {
-      bottomRef.current.scrollIntoView({
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || !messages.length) {
+      return;
+    }
+
+    const currentFirstMessageId = messages[0]?._id;
+
+    if (isInitialRenderRef.current) {
+      bottomRef.current?.scrollIntoView({
+        behavior: "auto",
+      });
+
+      isInitialRenderRef.current = false;
+
+      previousMessageCountRef.current = messages.length;
+
+      previousFirstMessageIdRef.current = currentFirstMessageId;
+
+      return;
+    }
+
+    const previousFirstMessageId = previousFirstMessageIdRef.current;
+
+    const olderMessagesWereAdded =
+      wasLoadingOlderRef.current &&
+      currentFirstMessageId !== previousFirstMessageId;
+
+    if (olderMessagesWereAdded) {
+      const previousScrollHeight = scrollStateRef.current.previousScrollHeight;
+
+      const newScrollHeight = container.scrollHeight;
+
+      container.scrollTop += newScrollHeight - previousScrollHeight;
+
+      wasLoadingOlderRef.current = false;
+    } else if (scrollStateRef.current.isNearBottom) {
+      bottomRef.current?.scrollIntoView({
         behavior: "smooth",
       });
+
+      setShowNewMessages(false);
+    } else if (messages.length > previousMessageCountRef.current) {
+      setShowNewMessages(true);
     }
+
+    previousMessageCountRef.current = messages.length;
+
+    previousFirstMessageIdRef.current = currentFirstMessageId;
   }, [messages]);
+
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+
+    setShowNewMessages(false);
+  };
 
   return (
     <div
       ref={containerRef}
       onScroll={updateScrollState}
-      className="relative min-h-0 flex-1 overflow-y-auto p-5"
+      className="relative h-full overflow-y-auto p-5"
     >
+      {hasMore && isLoadingOlder && (
+        <div className="mb-4 flex justify-center">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <Loader2 size={14} className="animate-spin" />
+            Loading older messages...
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {messages.map((message) => {
           const isMine = message.sender === currentUserId;
@@ -64,6 +162,17 @@ const MessageList = ({ messages, currentUserId }) => {
           );
         })}
       </div>
+
+      {showNewMessages && (
+        <button
+          type="button"
+          onClick={scrollToBottom}
+          className="sticky bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-xs font-medium text-white shadow-lg transition hover:bg-blue-500"
+        >
+          <ArrowDown size={14} />
+          New messages
+        </button>
+      )}
 
       <div ref={bottomRef} />
     </div>

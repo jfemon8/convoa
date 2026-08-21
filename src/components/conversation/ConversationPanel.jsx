@@ -14,8 +14,15 @@ const ConversationPanel = ({ conversation }) => {
   const navigate = useNavigate();
   const conversationId = conversation?._id;
 
-  const { messages, setMessages, isLoading, error } =
-    useConversationMessages(conversationId);
+  const {
+    messages,
+    setMessages,
+    hasMore,
+    isLoading,
+    isLoadingOlder,
+    error,
+    loadOlderMessages,
+  } = useConversationMessages(conversationId);
 
   const addMessage = useCallback(
     (message) => {
@@ -132,7 +139,14 @@ const ConversationPanel = ({ conversation }) => {
         )}
 
         {!isLoading && !error && messages.length > 0 && (
-          <MessageList messages={messages} currentUserId={user?._id} />
+          <MessageList
+            key={conversationId}
+            messages={messages}
+            currentUserId={user?._id}
+            hasMore={hasMore}
+            isLoadingOlder={isLoadingOlder}
+            onLoadOlder={loadOlderMessages}
+          />
         )}
       </div>
 
