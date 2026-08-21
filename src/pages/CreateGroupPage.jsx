@@ -127,7 +127,7 @@ const CreateGroupPage = () => {
           <button
             type="button"
             onClick={() => navigate("/chat")}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white cursor-pointer"
             aria-label="Back to chat"
           >
             <ArrowLeft size={20} />
