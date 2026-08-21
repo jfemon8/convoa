@@ -86,3 +86,18 @@ export const removeGroupParticipant = async (
 
     return response.data;
 };
+
+export const renameGroupConversation = async (
+    conversationId,
+    name,
+) => {
+    const response = await api.patch(
+        `/conversations/${conversationId}`,
+        {
+            name,
+        },
+    );
+
+    return response.data;
+};
+

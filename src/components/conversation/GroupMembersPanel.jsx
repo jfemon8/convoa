@@ -1,4 +1,4 @@
-import { Check, UserMinus, UserPlus, Users, X } from "lucide-react";
+import { Check, Pencil, UserMinus, UserPlus, Users, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   addGroupParticipants,
   removeGroupParticipant,
+  renameGroupConversation,
   searchUsers,
 } from "../../services/conversation.service";
 import ConfirmModal from "../common/ConfirmModal";
@@ -24,6 +25,9 @@ const GroupMembersPanel = ({
   const [removingUserId, setRemovingUserId] = useState(null);
   const [removeTarget, setRemoveTarget] = useState(null);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [groupName, setGroupName] = useState(conversation?.name || "");
+  const [isRenaming, setIsRenaming] = useState(false);
 
   const participants = conversation?.participants || [];
   const admins = conversation?.admins || [];
@@ -159,28 +163,122 @@ const GroupMembersPanel = ({
     }
   };
 
+  const handleRenameGroup = async (event) => {
+    event.preventDefault();
+
+    const trimmedName = groupName.trim();
+
+    if (!trimmedName) {
+      toast.error("Group name cannot be empty.");
+      return;
+    }
+
+    if (!isAdmin) {
+      return;
+    }
+
+    if (trimmedName === conversation.name) {
+      setIsEditingName(false);
+      return;
+    }
+
+    try {
+      setIsRenaming(true);
+
+      await renameGroupConversation(conversation._id, trimmedName);
+
+      toast.success("Group renamed successfully.");
+
+      setIsEditingName(false);
+
+      await onConversationUpdated?.();
+    } catch (error) {
+      const message =
+        error.response?.data?.error?.message || "Unable to rename group.";
+
+      toast.error(message);
+    } finally {
+      setIsRenaming(false);
+    }
+  };
+
   return (
     <>
       <div className="absolute right-4 top-14 z-30 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <Users size={17} className="text-slate-400" />
+        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-2">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <Users size={17} className="shrink-0 text-slate-400" />
 
-            <div>
-              <h3 className="text-sm font-semibold text-white">
-                Group members
-              </h3>
+            <div className="min-w-0 flex-1">
+              {isEditingName ? (
+                <form
+                  onSubmit={handleRenameGroup}
+                  className="flex items-center gap-2"
+                >
+                  <input
+                    type="text"
+                    value={groupName}
+                    onChange={(event) => setGroupName(event.target.value)}
+                    autoFocus
+                    maxLength={100}
+                    className="min-w-0 flex-1 rounded-lg border border-slate-600 bg-slate-950 px-2.5 py-1.5 text-sm text-white outline-none focus:border-slate-500"
+                  />
 
-              <p className="text-xs text-slate-500">
-                {participants.length} members
-              </p>
+                  <button
+                    type="submit"
+                    disabled={isRenaming}
+                    className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                  >
+                    {isRenaming ? "Saving..." : "Save"}
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isRenaming}
+                    onClick={() => {
+                      setGroupName(conversation.name || "");
+                      setIsEditingName(false);
+                    }}
+                    className="rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:opacity-50 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <h3 className="truncate text-sm font-semibold text-white">
+                      {conversation.name || "Unnamed Group"}
+                    </h3>
+
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGroupName(conversation.name || "");
+                          setIsEditingName(true);
+                        }}
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-800 hover:text-white cursor-pointer"
+                        title="Rename group"
+                        aria-label="Rename group"
+                      >
+                        <Pencil size={13} />
+                      </button>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-slate-500">
+                    {participants.length} members
+                  </p>
+                </>
+              )}
             </div>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-800 hover:text-white cursor-pointer"
+            className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-800 hover:text-white cursor-pointer"
             aria-label="Close"
           >
             <X size={17} />
