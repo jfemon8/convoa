@@ -4,10 +4,7 @@ import ProtectedRoute from "./components/layout/ProtectedRoute";
 import GuestRoute from "./components/layout/GuestRoute";
 
 import LoginPage from "./pages/LoginPage";
-
-const ChatPage = () => {
-  return <div>Chat Page</div>;
-};
+import ChatPage from "./pages/ChatPage";
 
 const CreateGroupPage = () => {
   return <div>Create Group Page</div>;
