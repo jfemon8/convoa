@@ -61,3 +61,28 @@ export const createGroupConversation = async ({
 
     return response.data;
 };
+
+export const addGroupParticipants = async (
+    conversationId,
+    userIds,
+) => {
+    const response = await api.post(
+        `/conversations/${conversationId}/participants`,
+        {
+            userIds,
+        },
+    );
+
+    return response.data;
+};
+
+export const removeGroupParticipant = async (
+    conversationId,
+    userId,
+) => {
+    const response = await api.delete(
+        `/conversations/${conversationId}/participants/${userId}`,
+    );
+
+    return response.data;
+};

@@ -1,5 +1,5 @@
-import { MessageCircle } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { MessageCircle, Users } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "../../context/AuthContext";
 import useConversationMessages from "../../hooks/useConversationMessages";
@@ -8,11 +8,13 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import MessageList from "./MessageList";
 import { useSocket } from "../../context/useSocket";
+import GroupMembersPanel from "./GroupMembersPanel";
 
-const ConversationPanel = ({ conversation }) => {
+const ConversationPanel = ({ conversation, onConversationUpdated }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const conversationId = conversation?._id;
+  const [showGroupMembers, setShowGroupMembers] = useState(false);
 
   const {
     messages,
@@ -110,7 +112,7 @@ const ConversationPanel = ({ conversation }) => {
   return (
     <section className="flex min-w-0 flex-1 flex-col bg-slate-950">
       {/* Header */}
-      <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 px-4">
+      <header className="relative flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 px-4">
         <button
           type="button"
           onClick={() => navigate("/chat")}
@@ -120,11 +122,40 @@ const ConversationPanel = ({ conversation }) => {
           <ArrowLeft size={20} />
         </button>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h2 className="truncate text-sm font-semibold text-white">{title}</h2>
 
-          <p className="mt-0.5 truncate text-xs text-slate-500">...</p>
+          {conversation.type === "group" ? (
+            <p className="mt-0.5 truncate text-xs text-slate-500">
+              {conversation.participants?.length || 0} members
+            </p>
+          ) : (
+            <p className="mt-0.5 truncate text-xs text-slate-500">...</p>
+          )}
         </div>
+
+        {conversation.type === "group" && (
+          <button
+            type="button"
+            onClick={() => setShowGroupMembers((previous) => !previous)}
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition ${
+              showGroupMembers
+                ? "bg-slate-800 text-white"
+                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+            }`}
+            aria-label="Group members"
+          >
+            <Users size={18} />
+          </button>
+        )}
+
+        {conversation.type === "group" && showGroupMembers && (
+          <GroupMembersPanel
+            conversation={conversation}
+            onConversationUpdated={onConversationUpdated}
+            onClose={() => setShowGroupMembers(false)}
+          />
+        )}
       </header>
 
       {/* Messages */}

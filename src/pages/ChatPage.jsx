@@ -94,7 +94,10 @@ const ChatPage = () => {
 
         {/* Conversation */}
         {conversationId && selectedConversation ? (
-          <ConversationPanel conversation={selectedConversation} />
+          <ConversationPanel
+            conversation={selectedConversation}
+            onConversationUpdated={refetch}
+          />
         ) : (
           <section className="hidden flex-1 items-center justify-center bg-slate-950 md:flex">
             <div className="max-w-sm text-center">
