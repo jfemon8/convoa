@@ -1,10 +1,19 @@
-import { Check, Pencil, UserMinus, UserPlus, Users, X } from "lucide-react";
+import {
+  Check,
+  Pencil,
+  ShieldCheck,
+  UserMinus,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useAuth } from "../../context/AuthContext";
 import {
   addGroupParticipants,
+  promoteGroupAdmin,
   removeGroupParticipant,
   renameGroupConversation,
   searchUsers,
@@ -28,6 +37,8 @@ const GroupMembersPanel = ({
   const [isEditingName, setIsEditingName] = useState(false);
   const [groupName, setGroupName] = useState(conversation?.name || "");
   const [isRenaming, setIsRenaming] = useState(false);
+  const [promoteTarget, setPromoteTarget] = useState(null);
+  const [isPromoting, setIsPromoting] = useState(false);
 
   const participants = conversation?.participants || [];
   const admins = conversation?.admins || [];
@@ -199,6 +210,40 @@ const GroupMembersPanel = ({
       toast.error(message);
     } finally {
       setIsRenaming(false);
+    }
+  };
+
+  const handlePromoteAdmin = (user) => {
+    if (!isAdmin) {
+      return;
+    }
+
+    setPromoteTarget(user);
+  };
+
+  const confirmPromoteAdmin = async () => {
+    if (!promoteTarget) {
+      return;
+    }
+
+    try {
+      setIsPromoting(true);
+
+      await promoteGroupAdmin(conversation._id, promoteTarget._id);
+
+      toast.success(`${promoteTarget.name} is now an admin.`);
+
+      setPromoteTarget(null);
+
+      await onConversationUpdated?.();
+    } catch (error) {
+      const message =
+        error.response?.data?.error?.message ||
+        "Unable to promote member to admin.";
+
+      toast.error(message);
+    } finally {
+      setIsPromoting(false);
     }
   };
 
@@ -394,15 +439,30 @@ const GroupMembersPanel = ({
                 </div>
 
                 {isAdmin && !participantIsCurrentUser && (
-                  <button
-                    type="button"
-                    disabled={removingUserId === participant._id}
-                    onClick={() => handleRemoveMember(participant)}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 cursor-pointer"
-                    aria-label={`Remove ${participant.name}`}
-                  >
-                    <UserMinus size={15} />
-                  </button>
+                  <div className="flex shrink-0 items-center gap-1">
+                    {!participantIsAdmin && (
+                      <button
+                        type="button"
+                        onClick={() => handlePromoteAdmin(participant)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer"
+                        aria-label={`Promote ${participant.name} to admin`}
+                        title="Promote to admin"
+                      >
+                        <ShieldCheck size={15} />
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      disabled={removingUserId === participant._id}
+                      onClick={() => handleRemoveMember(participant)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 cursor-pointer"
+                      aria-label={`Remove ${participant.name}`}
+                      title="Remove member"
+                    >
+                      <UserMinus size={15} />
+                    </button>
+                  </div>
                 )}
               </div>
             );
@@ -420,6 +480,22 @@ const GroupMembersPanel = ({
           </button>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={Boolean(promoteTarget)}
+        title="Promote to admin?"
+        message={
+          promoteTarget
+            ? `Are you sure you want to make ${promoteTarget.name} an admin of this group?`
+            : ""
+        }
+        confirmText="Make Admin"
+        cancelText="Cancel"
+        onCancel={() => setPromoteTarget(null)}
+        onConfirm={confirmPromoteAdmin}
+        isLoading={isPromoting}
+        danger={false}
+      />
+
       <ConfirmModal
         isOpen={Boolean(removeTarget)}
         title="Remove member?"

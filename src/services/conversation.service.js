@@ -101,3 +101,16 @@ export const renameGroupConversation = async (
     return response.data;
 };
 
+export const promoteGroupAdmin = async (
+    conversationId,
+    userId,
+) => {
+    const response = await api.post(
+        `/conversations/${conversationId}/admins`,
+        {
+            userId,
+        },
+    );
+
+    return response.data;
+};
