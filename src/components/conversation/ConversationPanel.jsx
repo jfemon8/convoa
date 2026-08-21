@@ -138,7 +138,7 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
           <button
             type="button"
             onClick={() => setShowGroupMembers((previous) => !previous)}
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition ${
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition cursor-pointer ${
               showGroupMembers
                 ? "bg-slate-800 text-white"
                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
