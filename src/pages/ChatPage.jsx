@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { MessageSquare } from "lucide-react";
-import { useParams } from "react-router";
+import { MessageSquare, Users } from "lucide-react";
+import { useParams, useNavigate } from "react-router";
 
 import ConversationList from "../components/conversation/ConversationList";
 import ConversationPanel from "../components/conversation/ConversationPanel";
@@ -12,6 +12,7 @@ import { useSocket } from "../context/useSocket";
 const ChatPage = () => {
   const { user, logout } = useAuth();
   const { conversationId } = useParams();
+  const navigate = useNavigate();
 
   const { conversations, isLoading, error, refetch } = useConversations();
 
@@ -58,13 +59,24 @@ const ChatPage = () => {
                 <p className="mt-0.5 text-xs text-slate-500">{user?.name}</p>
               </div>
 
-              <button
-                type="button"
-                onClick={logout}
-                className="text-xs text-slate-500 hover:text-white p-1 border border-slate-700 rounded hover:bg-slate-800 transition duration-200 cursor-pointer"
-              >
-                Logout
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => navigate("/groups/new")}
+                  className="flex items-center gap-1.5 rounded border border-slate-700 p-1 text-xs text-slate-300 transition hover:bg-slate-800 hover:text-white cursor-pointer"
+                >
+                  <Users size={14} />
+                  Create Group
+                </button>
+
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="text-xs text-slate-300 hover:text-white p-1 border border-slate-700 rounded hover:bg-slate-800 transition duration-200 cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
 
             <UserSearch onConversationCreated={refetch} />

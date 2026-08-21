@@ -122,7 +122,7 @@ const CreateGroupPage = () => {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto flex min-h-screen max-w-3xl flex-col border-x border-slate-800">
+      <div className="mx-auto flex min-h-screen flex-col border-x border-slate-800">
         <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 bg-slate-900 px-4">
           <button
             type="button"
@@ -267,7 +267,7 @@ const CreateGroupPage = () => {
             )}
           </div>
 
-          <div className="mt-auto border-t border-slate-800 bg-slate-900 p-4">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-slate-800 bg-slate-900 p-4">
             <button
               type="submit"
               disabled={isCreating || !name.trim() || selectedUsers.length < 2}
