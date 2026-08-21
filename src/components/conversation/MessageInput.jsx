@@ -63,7 +63,7 @@ const MessageInput = ({ conversationId, onMessageSent }) => {
         <button
           type="submit"
           disabled={!text.trim() || isSending}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           aria-label="Send message"
         >
           <Send size={18} />

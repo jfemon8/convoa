@@ -44,7 +44,7 @@ const ChatPage = () => {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto flex h-screen max-w-7xl overflow-hidden border-x border-slate-800">
+      <div className="mx-auto flex h-screen overflow-hidden border-x border-slate-800">
         {/* Sidebar */}
         <aside
           className={`flex w-full max-w-sm shrink-0 flex-col border-r border-slate-800 bg-slate-900 ${
