@@ -1,3 +1,268 @@
+# Convoa
+
+Convoa supports one-to-one conversations, group chats, real-time messaging, message history, user search, group management, and a responsive chat experience.
+
+---
+
+## Live Demo
+
+### Part 1 — Chat Application
+
+**Live URL:**
+`https://convoa.vercel.app`
+
+### Part 2 — Creative Landing Page
+
+**Live URL:**
+`https://convoa.vercel.app/landing`
+
+---
+
+## Repository
+
+**GitHub:**
+`https://github.com/jfemon8/convoa`
+
+---
+
+## Features
+
+### Authentication
+
+- Login with phone number and name
+- Automatic registration for new phone numbers
+- JWT-based authentication
+- Session restoration after page refresh
+- Protected and guest routes
+- Bangladeshi mobile number validation
+
+### Conversations
+
+- Search users by name or phone number
+- Start or open one-to-one conversations
+- View all current conversations
+- Direct and group conversations in the same chat interface
+- Conversation-specific message history
+
+### Messaging
+
+- Send messages
+- Prevent empty messages
+- Real-time incoming messages through Socket.io
+- Clear sender and receiver message styling
+- Timestamped messages
+- Automatic scrolling to the latest message
+- Older message loading through pagination
+- Mobile-friendly chat navigation
+
+### Groups
+
+- Create group conversations
+- Add members
+- Remove members
+- Leave a group
+- Promote members to admin
+- Rename groups
+- Group conversation updates in real time
+
+### User Experience
+
+- Loading states
+- Empty states
+- Error handling
+- Responsive layout
+- Toast notifications
+- Smooth navigation
+- Mobile master/detail chat flow
+
+---
+
+# Tech Stack
+
+## Core
+
+- React 19
+- Vite
+- React Router
+- JavaScript
+
+## Styling
+
+- Tailwind CSS
+- Lucide React
+
+## API and Real-Time
+
+- Axios
+- Socket.io Client
+
+## Utilities
+
+- `clsx`
+- `date-fns`
+- `react-hot-toast`
+
+---
+
+# Getting Started
+
+## Prerequisites
+
+Make sure you have Node.js and npm installed.
+
+You can check your versions with:
+
+```bash
+node -v
+npm -v
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/jfemon8/convoa.git
+```
+
+Move into the project directory:
+
+```bash
+cd convoa
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+VITE_API_BASE_URL=https://frontend-task-chatapp.onrender.com/api
+VITE_SOCKET_URL=https://frontend-task-chatapp.onrender.com
+```
+
+The REST API uses the `/api` base path, while the Socket.io connection uses the server root.
+
+---
+
+## Run the Development Server
+
+Start the application with:
+
+```bash
+npm run dev
+```
+
+The development server will normally be available at:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Build for Production
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+---
+
+## Lint
+
+Run ESLint with:
+
+```bash
+npm run lint
+```
+
+---
+
+# Project Structure
+
+The project is organized by responsibility so that UI, API communication, authentication, and real-time features remain easy to maintain.
+
+```text
+src/
+├── components/
+│   ├── chat/
+│   ├── conversation/
+│   ├── group/
+│   ├── layout/
+│   └── ui/
+│
+├── constants/
+│
+├── context/
+│   ├── AuthContext.jsx
+│   └── SocketContext.jsx
+│
+├── hooks/
+│
+├── lib/
+│   ├── api.js
+│   └── socket.js
+│
+├── pages/
+│   ├── LandingPage.jsx
+│   ├── LoginPage.jsx
+│   ├── ChatPage.jsx
+│   └── CreateGroupPage.jsx
+│
+├── services/
+│   ├── auth.service.js
+│   ├── user.service.js
+│   ├── conversation.service.js
+│   └── message.service.js
+│
+├── utils/
+│
+├── App.jsx
+├── main.jsx
+└── index.css
+```
+
+---
+
+# API Documentation
+
+The API contract was documented separately in:
+
+```text
+API.md
+```
+
+It covers:
+
+- Authentication
+- User search
+- Conversations
+- Message history
+- Group management
+- Sending messages
+- WebSocket events
+- Request models
+
+---
+
 ## Architecture and Approach
 
 I chose React with Vite because the application has several interactive parts and I wanted a simple setup with fast development and a clear component structure. I used React Router for page and conversation navigation, Tailwind CSS for responsive styling, Axios for API communication, and Socket.io for real-time updates. I also used small supporting libraries such as `lucide-react`, `date-fns`, `clsx`, and `react-hot-toast` where they helped keep the interface clean and maintainable.
