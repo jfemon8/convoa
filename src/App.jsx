@@ -1,21 +1,40 @@
-import { Routes, Route } from "react-router";
+import { Route, Routes, Navigate } from "react-router";
 
-function App() {
+import ProtectedRoute from "./components/layout/ProtectedRoute";
+import GuestRoute from "./components/layout/GuestRoute";
+
+import LoginPage from "./pages/LoginPage";
+
+const ChatPage = () => {
+  return <div>Chat Page</div>;
+};
+
+const CreateGroupPage = () => {
+  return <div>Create Group Page</div>;
+};
+
+const LandingPage = () => {
+  return <div>Landing Page</div>;
+};
+
+const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<div>Home</div>} />
+      <Route path="/landing" element={<LandingPage />} />
 
-      <Route path="/login" element={<div>Login</div>} />
+      <Route element={<GuestRoute />}>
+        <Route path="/login" element={<LoginPage />} />
+      </Route>
 
-      <Route path="/chat" element={<div>Chat</div>} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:conversationId" element={<ChatPage />} />
+        <Route path="/groups/new" element={<CreateGroupPage />} />
+      </Route>
 
-      <Route path="/chat/:conversationId" element={<div>Conversation</div>} />
-
-      <Route path="/groups/new" element={<div>Create Group</div>} />
-
-      <Route path="/landing" element={<div>Landing Page</div>} />
+      <Route path="*" element={<Navigate to="/chat" replace />} />
     </Routes>
   );
-}
+};
 
 export default App;
