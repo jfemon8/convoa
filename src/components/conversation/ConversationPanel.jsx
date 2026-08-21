@@ -60,7 +60,16 @@ const ConversationPanel = ({ conversation }) => {
     }
 
     const handleNewMessage = (message) => {
-      if (message?.conversation !== conversationId) {
+      if (!message?._id) {
+        return;
+      }
+
+      const messageConversationId =
+        typeof message.conversation === "object"
+          ? message.conversation?._id
+          : message.conversation;
+
+      if (String(messageConversationId) !== String(conversationId)) {
         return;
       }
 

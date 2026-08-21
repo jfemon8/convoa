@@ -26,14 +26,17 @@ const useConversationMessages = (conversationId) => {
         setError(null);
 
         try {
-            const response = await getConversationMessages(
-                conversationId,
-                {
-                    limit: MESSAGE_PAGE_SIZE,
-                },
-            );
+            const response = await getConversationMessages(conversationId, {
+                limit: MESSAGE_PAGE_SIZE,
+            });
 
-            setMessages(response?.messages || []);
+            const incomingMessages = response?.messages || [];
+
+            // Backend returns newest -> oldest.
+            // Frontend stores oldest -> newest.
+            const normalizedMessages = [...incomingMessages].reverse();
+
+            setMessages(normalizedMessages);
             setHasMore(Boolean(response?.hasMore));
         } catch (error) {
             const message =
@@ -60,6 +63,8 @@ const useConversationMessages = (conversationId) => {
             return;
         }
 
+        // Because frontend stores oldest -> newest,
+        // index 0 is always the oldest loaded message.
         const oldestMessage = messages[0];
 
         if (!oldestMessage?._id) {
@@ -69,33 +74,27 @@ const useConversationMessages = (conversationId) => {
         try {
             setIsLoadingOlder(true);
 
-            const response = await getConversationMessages(
-                conversationId,
-                {
-                    limit: MESSAGE_PAGE_SIZE,
-                    before: oldestMessage._id,
-                },
-            );
+            const response = await getConversationMessages(conversationId, {
+                limit: MESSAGE_PAGE_SIZE,
+                before: oldestMessage._id,
+            });
 
-            const olderMessages = response?.messages || [];
+            const olderMessagesFromApi = response?.messages || [];
+
+            // Backend returns newest -> oldest.
+            // Normalize to oldest -> newest before prepending.
+            const olderMessages = [...olderMessagesFromApi].reverse();
 
             setMessages((previousMessages) => {
                 const existingIds = new Set(
-                    previousMessages.map(
-                        (message) => message._id,
-                    ),
+                    previousMessages.map((message) => message._id),
                 );
 
-                const uniqueOlderMessages =
-                    olderMessages.filter(
-                        (message) =>
-                            !existingIds.has(message._id),
-                    );
+                const uniqueOlderMessages = olderMessages.filter(
+                    (message) => !existingIds.has(message._id),
+                );
 
-                return [
-                    ...uniqueOlderMessages,
-                    ...previousMessages,
-                ];
+                return [...uniqueOlderMessages, ...previousMessages];
             });
 
             setHasMore(Boolean(response?.hasMore));
@@ -108,18 +107,18 @@ const useConversationMessages = (conversationId) => {
         } finally {
             setIsLoadingOlder(false);
         }
-    }, [
-        conversationId,
-        hasMore,
-        isLoadingOlder,
-        messages,
-    ]);
+    }, [conversationId, hasMore, isLoadingOlder, messages]);
 
     useEffect(() => {
         let cancelled = false;
 
         const loadMessages = async () => {
             if (!conversationId) {
+                setMessages([]);
+                setHasMore(false);
+                setError(null);
+                setIsLoading(false);
+
                 return;
             }
 
@@ -127,18 +126,21 @@ const useConversationMessages = (conversationId) => {
             setError(null);
 
             try {
-                const response = await getConversationMessages(
-                    conversationId,
-                    {
-                        limit: MESSAGE_PAGE_SIZE,
-                    },
-                );
+                const response = await getConversationMessages(conversationId, {
+                    limit: MESSAGE_PAGE_SIZE,
+                });
 
                 if (cancelled) {
                     return;
                 }
 
-                setMessages(response?.messages || []);
+                const incomingMessages = response?.messages || [];
+
+                // Backend: newest -> oldest
+                // Frontend: oldest -> newest
+                const normalizedMessages = [...incomingMessages].reverse();
+
+                setMessages(normalizedMessages);
                 setHasMore(Boolean(response?.hasMore));
             } catch (error) {
                 if (cancelled) {
