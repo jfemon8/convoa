@@ -102,8 +102,8 @@ const ChatPage = () => {
   }, [socket, handleConversationUpdated, handleIncomingMessage]);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto flex overflow-hidden border-x border-slate-800">
+    <main className="h-dvh overflow-hidden bg-slate-950 text-white">
+      <div className="mx-auto flex h-full overflow-hidden border-x border-slate-800">
         {/* Sidebar */}
         <aside
           className={`flex w-full max-w-sm shrink-0 flex-col border-r border-slate-800 bg-slate-900 ${

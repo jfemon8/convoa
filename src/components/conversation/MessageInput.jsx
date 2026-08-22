@@ -41,7 +41,7 @@ const MessageInput = ({ conversationId, onMessageSent }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shrink-0 border-t border-slate-800 bg-slate-900 p-4"
+      className="shrink-0 border-t border-slate-800 bg-slate-900 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
     >
       <div className="flex items-end gap-3">
         <textarea
