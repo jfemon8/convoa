@@ -1,5 +1,5 @@
 import { Search, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
@@ -8,6 +8,7 @@ import {
   startDirectConversation,
 } from "../../services/conversation.service";
 import { useAuth } from "../../context/AuthContext";
+import useDismissOnOutsideInteraction from "../../hooks/useDismissOnOutsideInteraction";
 
 const UserSearch = ({ onConversationCreated }) => {
   const navigate = useNavigate();
@@ -19,9 +20,22 @@ const UserSearch = ({ onConversationCreated }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
 
+  const containerRef = useRef(null);
+
   const displayUsers = query.trim()
     ? users.filter((user) => String(user._id) !== String(currentUser?._id))
     : [];
+
+  const handleOutsideInteraction = useCallback(() => {
+    setQuery("");
+    setUsers([]);
+  }, []);
+
+  useDismissOnOutsideInteraction(
+    containerRef,
+    handleOutsideInteraction,
+    Boolean(query.trim()),
+  );
 
   useEffect(() => {
     const trimmedQuery = query.trim();
@@ -90,7 +104,7 @@ const UserSearch = ({ onConversationCreated }) => {
   };
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <div className="relative">
         <Search
           size={17}
@@ -107,7 +121,7 @@ const UserSearch = ({ onConversationCreated }) => {
       </div>
 
       {query.trim() && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-80 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
+        <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-[min(20rem,55dvh)] overflow-y-auto overscroll-contain rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
           {isSearching && (
             <div className="px-4 py-5 text-center text-sm text-slate-400">
               Searching...

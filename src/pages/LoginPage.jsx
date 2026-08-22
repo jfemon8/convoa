@@ -111,10 +111,10 @@ const LoginPage = () => {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+    <main className="flex min-h-dvh items-center justify-center bg-slate-950 px-4 py-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-2xl bg-white p-4 lg:p-8 shadow-xl"
+        className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl sm:p-6 lg:p-8"
       >
         <div className="mb-8">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-slate-900">

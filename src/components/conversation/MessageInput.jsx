@@ -41,9 +41,9 @@ const MessageInput = ({ conversationId, onMessageSent }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="shrink-0 border-t border-slate-800 bg-slate-900 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+      className="shrink-0 border-t border-slate-800 bg-slate-900 px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:px-4 sm:pt-4 sm:pb-[calc(1rem+env(safe-area-inset-bottom))]"
     >
-      <div className="flex items-end gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <textarea
           value={text}
           onChange={(event) => setText(event.target.value)}
@@ -70,7 +70,7 @@ const MessageInput = ({ conversationId, onMessageSent }) => {
         </button>
       </div>
 
-      <p className="mt-2 text-[11px] text-slate-600">
+      <p className="mt-2 hidden text-[11px] text-slate-600 sm:block">
         Enter to send · Shift + Enter for a new line
       </p>
     </form>

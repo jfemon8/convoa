@@ -102,23 +102,25 @@ const ChatPage = () => {
   }, [socket, handleConversationUpdated, handleIncomingMessage]);
 
   return (
-    <main className="h-dvh overflow-hidden bg-slate-950 text-white">
+    <main className="app-shell bg-slate-950 text-white">
       <div className="mx-auto flex h-full overflow-hidden border-x border-slate-800">
         {/* Sidebar */}
         <aside
-          className={`flex w-full max-w-sm shrink-0 flex-col border-r border-slate-800 bg-slate-900 ${
+          className={`flex w-full shrink-0 flex-col border-r border-slate-800 bg-slate-900 md:max-w-sm ${
             conversationId ? "hidden md:flex" : "flex"
           }`}
         >
           <header className="border-b border-slate-800 p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
+            <div className="mb-4 flex items-center justify-between gap-2">
+              <div className="min-w-0">
                 <h1 className="text-lg font-bold">Convoa</h1>
 
-                <p className="mt-0.5 text-xs text-slate-400">{user?.name}</p>
+                <p className="mt-0.5 truncate text-xs text-slate-400">
+                  {user?.name}
+                </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <button
                   type="button"
                   onClick={() => navigate("/groups/new")}

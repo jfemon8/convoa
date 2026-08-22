@@ -135,8 +135,8 @@ const CreateGroupPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <div className="mx-auto flex min-h-screen flex-col border-x border-slate-800">
+    <main className="app-shell bg-slate-950 text-white">
+      <div className="mx-auto flex h-full flex-col border-x border-slate-800">
         <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800 bg-slate-900 px-4">
           <button
             type="button"
@@ -151,16 +151,19 @@ const CreateGroupPage = () => {
             <Users size={18} />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h1 className="text-sm font-semibold">Create Group</h1>
-            <p className="text-xs text-slate-400">
+            <p className="truncate text-xs text-slate-400">
               Add at least two other participants
             </p>
           </div>
         </header>
 
-        <form onSubmit={handleCreateGroup} className="flex flex-1 flex-col">
-          <div className="space-y-5 p-5">
+        <form
+          onSubmit={handleCreateGroup}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <div className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4 sm:p-5">
             <div>
               <label
                 htmlFor="group-name"
@@ -281,11 +284,11 @@ const CreateGroupPage = () => {
             )}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 border-t border-slate-800 bg-slate-900 p-4">
+          <div className="shrink-0 border-t border-slate-800 bg-slate-900 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             <button
               type="submit"
               disabled={isCreating || !name.trim() || selectedUsers.length < 2}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full cursor-pointer rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCreating ? "Creating group..." : "Create Group"}
             </button>

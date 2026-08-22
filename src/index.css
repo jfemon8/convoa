@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+:root {
+  --app-height: 100dvh;
+  --app-offset-top: 0px;
+}
+
 html,
 body,
 #root {
@@ -8,8 +13,30 @@ body,
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+}
+
+.app-shell {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--app-height);
+  overflow: hidden;
+  transform: translateY(var(--app-offset-top));
 }

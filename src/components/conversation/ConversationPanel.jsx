@@ -134,6 +134,7 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
         {conversation.type === "group" && (
           <button
             type="button"
+            data-group-members-toggle
             onClick={() => setShowGroupMembers((previous) => !previous)}
             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition cursor-pointer ${
               showGroupMembers

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDown, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -109,6 +109,30 @@ const MessageList = ({
     previousFirstMessageIdRef.current = currentFirstMessageId;
   }, [messages]);
 
+  useEffect(() => {
+    const viewport = window.visualViewport;
+
+    if (!viewport) {
+      return undefined;
+    }
+
+    const handleViewportResize = () => {
+      if (!scrollStateRef.current.isNearBottom) {
+        return;
+      }
+
+      bottomRef.current?.scrollIntoView({
+        behavior: "auto",
+      });
+    };
+
+    viewport.addEventListener("resize", handleViewportResize);
+
+    return () => {
+      viewport.removeEventListener("resize", handleViewportResize);
+    };
+  }, []);
+
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -121,7 +145,7 @@ const MessageList = ({
     <div
       ref={containerRef}
       onScroll={updateScrollState}
-      className="relative h-full overflow-y-auto p-5"
+      className="relative h-full overflow-y-auto overscroll-contain p-3 sm:p-5"
     >
       {hasMore && isLoadingOlder && (
         <div className="mb-4 flex justify-center">
@@ -142,13 +166,15 @@ const MessageList = ({
               className={`flex ${isMine ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
+                className={`max-w-[85%] rounded-2xl px-3.5 py-2 sm:max-w-[75%] sm:px-4 sm:py-2.5 ${
                   isMine
                     ? "rounded-br-md bg-blue-600 text-white"
                     : "rounded-bl-md bg-slate-800 text-slate-100"
                 }`}
               >
-                <p className="text-sm leading-6">{message.text}</p>
+                <p className="text-sm leading-6 whitespace-pre-wrap wrap-break-word">
+                  {message.text}
+                </p>
 
                 <p
                   className={`mt-1 text-[10px] ${

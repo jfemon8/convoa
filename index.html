@@ -5,9 +5,33 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
     />
     <title>convoa</title>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var viewport = window.visualViewport;
+
+        var syncViewport = function () {
+          var height = viewport ? viewport.height : window.innerHeight;
+          var offsetTop = viewport ? viewport.offsetTop : 0;
+
+          root.style.setProperty("--app-height", height + "px");
+          root.style.setProperty("--app-offset-top", offsetTop + "px");
+        };
+
+        syncViewport();
+
+        if (viewport) {
+          viewport.addEventListener("resize", syncViewport);
+          viewport.addEventListener("scroll", syncViewport);
+        }
+
+        window.addEventListener("resize", syncViewport);
+        window.addEventListener("orientationchange", syncViewport);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

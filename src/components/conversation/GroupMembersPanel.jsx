@@ -5,9 +5,8 @@ import {
   UserMinus,
   UserPlus,
   Users,
-  X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
@@ -20,6 +19,7 @@ import {
   searchUsers,
 } from "../../services/conversation.service";
 import ConfirmModal from "../common/ConfirmModal";
+import useDismissOnOutsideInteraction from "../../hooks/useDismissOnOutsideInteraction";
 
 const GroupMembersPanel = ({
   conversation,
@@ -41,6 +41,28 @@ const GroupMembersPanel = ({
   const [isRenaming, setIsRenaming] = useState(false);
   const [promoteTarget, setPromoteTarget] = useState(null);
   const [isPromoting, setIsPromoting] = useState(false);
+
+  const panelRef = useRef(null);
+
+  const hasOpenDialog =
+    Boolean(removeTarget) || Boolean(promoteTarget) || showLeaveModal;
+
+  const handleOutsideInteraction = useCallback(
+    (event) => {
+      if (event.target?.closest?.("[data-group-members-toggle]")) {
+        return;
+      }
+
+      onClose?.();
+    },
+    [onClose],
+  );
+
+  useDismissOnOutsideInteraction(
+    panelRef,
+    handleOutsideInteraction,
+    !hasOpenDialog,
+  );
 
   const participants = conversation?.participants || [];
   const admins = conversation?.admins || [];
@@ -269,8 +291,11 @@ const GroupMembersPanel = ({
 
   return (
     <>
-      <div className="absolute right-4 top-14 z-30 w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-2">
+      <div
+        ref={panelRef}
+        className="absolute right-4 top-14 z-30 flex max-h-[calc(var(--app-height)-5.5rem)] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl"
+      >
+        <div className="flex shrink-0 items-center border-b border-slate-800 px-4 py-2.5">
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <Users size={17} className="shrink-0 text-slate-400" />
 
@@ -339,19 +364,10 @@ const GroupMembersPanel = ({
               )}
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white cursor-pointer"
-            aria-label="Close"
-          >
-            <X size={17} />
-          </button>
         </div>
 
         {isAdmin && (
-          <div className="border-b border-slate-800 p-3">
+          <div className="shrink-0 border-b border-slate-800 p-3">
             <div className="relative">
               <UserPlus
                 size={16}
@@ -414,7 +430,7 @@ const GroupMembersPanel = ({
           </div>
         )}
 
-        <div className="max-h-80 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
           {participants.map((participant) => {
             const participantIsCurrentUser =
               String(participant._id) === String(currentUser?._id);
@@ -489,7 +505,7 @@ const GroupMembersPanel = ({
           })}
         </div>
 
-        <div className="border-t border-slate-800 p-3">
+        <div className="shrink-0 border-t border-slate-800 p-3">
           <button
             type="button"
             disabled={isSubmitting}

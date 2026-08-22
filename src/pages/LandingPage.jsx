@@ -205,7 +205,7 @@ const LandingPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#F7F5EF] text-[#171717]">
+    <main className="min-h-dvh overflow-x-hidden bg-[#F7F5EF] text-[#171717]">
       {/* Decorative background */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -left-32 -top-40 h-112 w-md rounded-full bg-orange-300/15 blur-3xl" />

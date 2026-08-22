@@ -16,18 +16,11 @@ const ConfirmModal = ({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !isLoading) {
-          onCancel?.();
-        }
-      }}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-sm rounded-xl border border-slate-700 bg-slate-900 p-2 shadow-2xl"
+        className="max-h-full w-full max-w-sm overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 p-3 shadow-2xl"
       >
         <div className="flex items-center gap-2">
           <div
