@@ -1,23 +1,38 @@
 import axios from "axios";
 
+import { STORAGE_KEYS } from "../constants/storage";
+
+export const UNAUTHORIZED_EVENT = "convoa:unauthorized";
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("convoa_token");
+  (config) => {
+    const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-        return config;
-    },
-    (error) => Promise.reject(error)
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+    }
+
+    return Promise.reject(error);
+  },
 );
 
 export default api;

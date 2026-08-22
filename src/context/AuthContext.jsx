@@ -9,6 +9,7 @@ import {
 
 import { getCurrentUser, loginUser } from "../services/auth.service";
 import { STORAGE_KEYS } from "../constants/storage";
+import { UNAUTHORIZED_EVENT } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -40,6 +41,14 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener(UNAUTHORIZED_EVENT, logout);
+
+    return () => {
+      window.removeEventListener(UNAUTHORIZED_EVENT, logout);
+    };
+  }, [logout]);
 
   useEffect(() => {
     const restoreSession = async () => {

@@ -11,8 +11,6 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (!token) {
-      setSocket(null);
-
       return undefined;
     }
 

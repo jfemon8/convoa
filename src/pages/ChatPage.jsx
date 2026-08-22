@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { MessageSquare, Users } from "lucide-react";
+import { ArrowLeft, Loader2, MessageSquare, Users } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 
 import ConversationList from "../components/conversation/ConversationList";
@@ -115,7 +115,7 @@ const ChatPage = () => {
               <div>
                 <h1 className="text-lg font-bold">Convoa</h1>
 
-                <p className="mt-0.5 text-xs text-slate-500">{user?.name}</p>
+                <p className="mt-0.5 text-xs text-slate-400">{user?.name}</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -154,24 +154,51 @@ const ChatPage = () => {
         {/* Conversation */}
         {conversationId && selectedConversation ? (
           <ConversationPanel
+            key={conversationId}
             conversation={selectedConversation}
             onConversationUpdated={refetch}
           />
         ) : (
-          <section className="hidden flex-1 items-center justify-center bg-slate-950 md:flex">
+          <section
+            className={`flex-1 items-center justify-center bg-slate-950 px-6 ${
+              conversationId ? "flex" : "hidden md:flex"
+            }`}
+          >
             <div className="max-w-sm text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900">
-                <MessageSquare size={28} className="text-slate-500" />
+                {conversationId && isLoading ? (
+                  <Loader2 size={26} className="animate-spin text-slate-400" />
+                ) : (
+                  <MessageSquare size={28} className="text-slate-400" />
+                )}
               </div>
 
               <h2 className="mt-5 text-lg font-semibold">
-                Select a conversation
+                {!conversationId
+                  ? "Select a conversation"
+                  : isLoading
+                    ? "Loading conversation..."
+                    : "Conversation not found"}
               </h2>
 
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Choose a conversation from the sidebar or search for someone to
-                start a new one.
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                {!conversationId
+                  ? "Choose a conversation from the sidebar or search for someone to start a new one."
+                  : isLoading
+                    ? "Hang tight while we fetch your conversations."
+                    : "This conversation may have been removed, or you are no longer a participant."}
               </p>
+
+              {conversationId && !isLoading && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/chat")}
+                  className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:bg-slate-800 hover:text-white"
+                >
+                  <ArrowLeft size={16} />
+                  Back to conversations
+                </button>
+              )}
             </div>
           </section>
         )}

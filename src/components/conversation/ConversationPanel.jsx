@@ -10,6 +10,10 @@ import MessageList from "./MessageList";
 import { useSocket } from "../../context/useSocket";
 import GroupMembersPanel from "./GroupMembersPanel";
 import { normalizeMessage } from "../../utils/message";
+import {
+  getConversationSubtitle,
+  getConversationTitle,
+} from "../../utils/conversation";
 
 const ConversationPanel = ({ conversation, onConversationUpdated }) => {
   const { user } = useAuth();
@@ -90,12 +94,12 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
       <section className="flex min-w-0 flex-1 flex-col bg-slate-950">
         <div className="max-w-sm text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900">
-            <MessageCircle size={28} className="text-slate-500" />
+            <MessageCircle size={28} className="text-slate-400" />
           </div>
 
           <h2 className="mt-5 text-lg font-semibold">Select a conversation</h2>
 
-          <p className="mt-2 text-sm leading-6 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-400">
             Choose a conversation from the sidebar or search for someone to
             start a new one.
           </p>
@@ -104,10 +108,7 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
     );
   }
 
-  const title =
-    conversation.type === "group"
-      ? conversation.name || "Unnamed Group"
-      : conversation.participant?.name || "Unknown User";
+  const title = getConversationTitle(conversation);
 
   return (
     <section className="flex min-w-0 flex-1 flex-col bg-slate-950">
@@ -125,13 +126,9 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-sm font-semibold text-white">{title}</h2>
 
-          {conversation.type === "group" ? (
-            <p className="mt-0.5 truncate text-xs text-slate-500">
-              {conversation.participants?.length || 0} members
-            </p>
-          ) : (
-            <p className="mt-0.5 truncate text-xs text-slate-500">...</p>
-          )}
+          <p className="mt-0.5 truncate text-xs text-slate-400">
+            {getConversationSubtitle(conversation)}
+          </p>
         </div>
 
         {conversation.type === "group" && (
@@ -162,7 +159,7 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
       <div className="min-h-0 flex-1">
         {isLoading && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-slate-500">Loading messages...</p>
+            <p className="text-sm text-slate-400">Loading messages...</p>
           </div>
         )}
 
@@ -174,7 +171,7 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
 
         {!isLoading && !error && messages.length === 0 && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-slate-500">No messages yet.</p>
+            <p className="text-sm text-slate-400">No messages yet.</p>
           </div>
         )}
 

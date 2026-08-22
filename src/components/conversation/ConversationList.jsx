@@ -51,7 +51,7 @@ const ConversationList = ({ conversations, isLoading, error, onRetry }) => {
           No conversations yet
         </h3>
 
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-400">
           Search for someone to start a conversation.
         </p>
       </div>

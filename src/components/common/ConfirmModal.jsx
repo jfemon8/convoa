@@ -51,7 +51,7 @@ const ConfirmModal = ({
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             aria-label="Close"
           >
             <X size={17} />

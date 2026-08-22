@@ -29,7 +29,7 @@ const ConversationItem = ({ conversation, isActive = false, onClick }) => {
         <div className="flex items-center justify-between gap-2">
           <h3 className="truncate text-sm font-semibold text-white">{title}</h3>
 
-          <span className="shrink-0 text-xs text-slate-500">
+          <span className="shrink-0 text-xs text-slate-400">
             {conversation.updatedAt
               ? new Date(conversation.updatedAt).toLocaleTimeString([], {
                   hour: "2-digit",
@@ -39,7 +39,7 @@ const ConversationItem = ({ conversation, isActive = false, onClick }) => {
           </span>
         </div>
 
-        <p className="mt-0.5 truncate text-xs text-slate-500">
+        <p className="mt-0.5 truncate text-xs text-slate-400">
           {preview || subtitle}
         </p>
       </div>

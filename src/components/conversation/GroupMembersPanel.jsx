@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 
 import { useAuth } from "../../context/AuthContext";
@@ -26,6 +27,7 @@ const GroupMembersPanel = ({
   onClose,
 }) => {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
@@ -70,25 +72,41 @@ const GroupMembersPanel = ({
       return undefined;
     }
 
+    // The debounce cancels pending timers, not in-flight requests. Without this
+    // guard a slow response for an older query can overwrite a newer one.
+    let cancelled = false;
+
     const timeoutId = setTimeout(async () => {
       try {
         setIsSearching(true);
 
         const data = await searchUsers(trimmedQuery);
 
+        if (cancelled) {
+          return;
+        }
+
         setUsers(Array.isArray(data) ? data : []);
       } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
         const message =
           error.response?.data?.error?.message || "Unable to search users.";
 
         toast.error(message);
         setUsers([]);
       } finally {
-        setIsSearching(false);
+        if (!cancelled) {
+          setIsSearching(false);
+        }
       }
     }, 350);
 
     return () => {
+      cancelled = true;
+
       clearTimeout(timeoutId);
     };
   }, [query]);
@@ -163,7 +181,9 @@ const GroupMembersPanel = ({
       setShowLeaveModal(false);
       onClose?.();
 
-      window.location.href = "/chat";
+      await onConversationUpdated?.();
+
+      navigate("/chat");
     } catch (error) {
       const message =
         error.response?.data?.error?.message || "Unable to leave the group.";
@@ -303,7 +323,7 @@ const GroupMembersPanel = ({
                           setGroupName(conversation.name || "");
                           setIsEditingName(true);
                         }}
-                        className="flex h-7 w-7 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-800 hover:text-white cursor-pointer"
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-800 hover:text-white cursor-pointer"
                         title="Rename group"
                         aria-label="Rename group"
                       >
@@ -312,7 +332,7 @@ const GroupMembersPanel = ({
                     )}
                   </div>
 
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-400">
                     {participants.length} members
                   </p>
                 </>
@@ -323,7 +343,7 @@ const GroupMembersPanel = ({
           <button
             type="button"
             onClick={onClose}
-            className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-800 hover:text-white cursor-pointer"
+            className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white cursor-pointer"
             aria-label="Close"
           >
             <X size={17} />
@@ -335,7 +355,7 @@ const GroupMembersPanel = ({
             <div className="relative">
               <UserPlus
                 size={16}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               />
 
               <input
@@ -350,13 +370,13 @@ const GroupMembersPanel = ({
             {query.trim() && (
               <div className="mt-2 max-h-40 overflow-y-auto rounded-xl border border-slate-800">
                 {isSearching && (
-                  <p className="px-3 py-4 text-center text-xs text-slate-500">
+                  <p className="px-3 py-4 text-center text-xs text-slate-400">
                     Searching...
                   </p>
                 )}
 
                 {!isSearching && !displayUsers.length && (
-                  <p className="px-3 py-4 text-center text-xs text-slate-500">
+                  <p className="px-3 py-4 text-center text-xs text-slate-400">
                     No users found.
                   </p>
                 )}
@@ -381,12 +401,12 @@ const GroupMembersPanel = ({
                           {user.name}
                         </p>
 
-                        <p className="truncate text-[11px] text-slate-500">
+                        <p className="truncate text-[11px] text-slate-400">
                           {user.phone}
                         </p>
                       </div>
 
-                      <Check size={15} className="text-slate-500" />
+                      <Check size={15} className="text-slate-400" />
                     </button>
                   ))}
               </div>
@@ -421,12 +441,12 @@ const GroupMembersPanel = ({
                     {participant.name}
 
                     {participantIsCurrentUser && (
-                      <span className="ml-1 text-xs text-slate-500">(You)</span>
+                      <span className="ml-1 text-xs text-slate-400">(You)</span>
                     )}
                   </p>
 
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-xs text-slate-500">
+                    <p className="truncate text-xs text-slate-400">
                       {participant.phone}
                     </p>
 
@@ -444,7 +464,7 @@ const GroupMembersPanel = ({
                       <button
                         type="button"
                         onClick={() => handlePromoteAdmin(participant)}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-blue-500/10 hover:text-blue-400 cursor-pointer"
                         aria-label={`Promote ${participant.name} to admin`}
                         title="Promote to admin"
                       >
@@ -456,7 +476,7 @@ const GroupMembersPanel = ({
                       type="button"
                       disabled={removingUserId === participant._id}
                       onClick={() => handleRemoveMember(participant)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 cursor-pointer"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 cursor-pointer"
                       aria-label={`Remove ${participant.name}`}
                       title="Remove member"
                     >

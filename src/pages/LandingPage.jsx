@@ -208,8 +208,8 @@ const LandingPage = () => {
     <main className="min-h-screen bg-[#F7F5EF] text-[#171717]">
       {/* Decorative background */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-[-8rem] top-[-10rem] h-[28rem] w-[28rem] rounded-full bg-orange-300/15 blur-3xl" />
-        <div className="absolute right-[-10rem] top-[18rem] h-[30rem] w-[30rem] rounded-full bg-emerald-300/10 blur-3xl" />
+        <div className="absolute -left-32 -top-40 h-112 w-md rounded-full bg-orange-300/15 blur-3xl" />
+        <div className="absolute -right-40 top-72 h-120 w-120 rounded-full bg-emerald-300/10 blur-3xl" />
       </div>
 
       {/* Header */}
@@ -278,18 +278,18 @@ const LandingPage = () => {
       {/* Hero */}
       <section className="mx-auto max-w-7xl px-5 pb-16 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pb-24 lg:pt-24">
         <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
-          <div>
+          <div className="min-w-0">
             <div className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3.5 py-2 text-xs font-semibold text-orange-700">
               <span className="h-1.5 w-1.5 rounded-full bg-[#FF5A36]" />
               Real conversations. Less friction.
             </div>
 
-            <h1 className="mt-6 max-w-2xl font-serif text-5xl font-semibold leading-[0.98] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-4 max-w-2xl font-serif text-5xl font-semibold leading-[0.98] tracking-[-0.035em] max-[380px]:text-4xl sm:text-6xl lg:text-7xl">
               Stay in the
-              <span className="text-[#FF5A36]"> conversation.</span>
+              <span className="text-[#EA4A26]"> conversation.</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg sm:leading-8">
+            <p className="mt-4 max-w-xl text-base leading-7 text-neutral-600 sm:text-lg sm:leading-8">
               Convoa brings direct and group messaging into one focused
               experience — with real-time updates, searchable people, message
               history, and controls that stay out of your way.
@@ -298,7 +298,7 @@ const LandingPage = () => {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to={ctaTarget}
-                className="inline-flex items-center gap-2 rounded-full bg-[#FF5A36] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#E84D2D]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#D63C17] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#BE3A1A]"
               >
                 {isAuthenticated ? "Open Convoa" : "Try Convoa"}
                 <ArrowRight size={16} />
@@ -306,7 +306,7 @@ const LandingPage = () => {
 
               <a
                 href="#demo"
-                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-6 py-3.5 text-sm font-semibold text-neutral-800 transition hover:bg-white"
+                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-white"
               >
                 See it in action
                 <ChevronDown size={15} />
@@ -358,7 +358,7 @@ const LandingPage = () => {
                 </div>
               </div>
 
-              <div className="grid min-h-[31rem] grid-cols-1 sm:grid-cols-[14rem_1fr]">
+              <div className="grid min-h-124 grid-cols-1 sm:grid-cols-[14rem_1fr]">
                 {/* Sidebar */}
                 <aside className="hidden border-r border-black/6 bg-[#FAFAF8] sm:block">
                   <div className="border-b border-black/6 p-4">
@@ -404,7 +404,7 @@ const LandingPage = () => {
                 </aside>
 
                 {/* Chat */}
-                <div className="flex min-h-[31rem] min-w-0 flex-col">
+                <div className="flex min-h-124 min-w-0 flex-col">
                   <div className="flex items-center justify-between border-b border-black/6 px-4 py-3.5 sm:px-5">
                     <div className="flex items-center gap-3">
                       <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 font-serif text-sm font-semibold text-emerald-700">
@@ -414,7 +414,7 @@ const LandingPage = () => {
 
                       <div>
                         <p className="text-sm font-semibold">Alice Smith</p>
-                        <p className="mt-0.5 text-[10px] text-emerald-600">
+                        <p className="mt-0.5 text-[10px] text-emerald-700">
                           Active now
                         </p>
                       </div>
@@ -444,7 +444,7 @@ const LandingPage = () => {
                         <div
                           className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-5 shadow-sm ${
                             message.mine
-                              ? "rounded-br-md bg-[#FF5A36] text-white"
+                              ? "rounded-br-md bg-[#D63C17] text-white"
                               : "rounded-bl-md bg-[#EEECE5] text-neutral-800"
                           }`}
                         >
@@ -452,9 +452,7 @@ const LandingPage = () => {
 
                           <div
                             className={`mt-1 text-[9px] ${
-                              message.mine
-                                ? "text-white/65"
-                                : "text-neutral-400"
+                              message.mine ? "text-white" : "text-neutral-500"
                             }`}
                           >
                             {message.time}
@@ -576,7 +574,7 @@ const LandingPage = () => {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] font-medium tracking-[0.16em] text-[#FF5A36]">
+                  <span className="font-mono text-[10px] font-medium tracking-[0.16em] text-[#BE3A1A]">
                     {feature.number}
                   </span>
 
@@ -607,7 +605,7 @@ const LandingPage = () => {
               How it works
             </p>
 
-            <h2 className="mt-3 max-w-lg font-serif text-4xl font-semibold leading-tight tracking-[-0.025em] sm:text-5xl">
+            <h2 className="mt-3 max-w-lg font-serif text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
               Simple on the surface.
               <br />
               Thoughtful underneath.
@@ -637,7 +635,7 @@ const LandingPage = () => {
                   key={item.step}
                   className="relative grid grid-cols-[2.5rem_1fr] gap-5 border-b border-black/7 py-8 first:pt-2 last:border-b-0 sm:grid-cols-[4rem_1fr] sm:gap-7"
                 >
-                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border border-black/8 bg-[#F7F5EF] font-mono text-[10px] font-medium text-[#FF5A36] sm:h-14 sm:w-14">
+                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border border-black/8 bg-[#F7F5EF] font-mono text-[10px] font-medium text-[#BE3A1A] sm:h-14 sm:w-14">
                     {item.step}
                   </div>
 
@@ -680,7 +678,7 @@ const LandingPage = () => {
                 The details
               </p>
 
-              <h2 className="mt-3 max-w-md font-serif text-4xl font-semibold leading-tight tracking-[-0.025em] sm:text-5xl">
+              <h2 className="mt-3 max-w-md font-serif text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
                 The little things are part of the product.
               </h2>
 
@@ -763,7 +761,7 @@ const LandingPage = () => {
 
         <h2 className="mx-auto mt-4 max-w-2xl font-serif text-4xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl lg:text-6xl">
           One conversation.
-          <span className="text-[#FF5A36]"> Zero noise.</span>
+          <span className="text-[#EA4A26]"> Zero noise.</span>
         </h2>
 
         <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-neutral-500 sm:text-lg">
@@ -772,7 +770,7 @@ const LandingPage = () => {
 
         <Link
           to={ctaTarget}
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#FF5A36] px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#E84D2D]"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#D63C17] px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#BE3A1A]"
         >
           {isAuthenticated ? "Open chat" : "Start chatting"}
           <ArrowRight size={16} />

@@ -125,7 +125,7 @@ const MessageList = ({
     >
       {hasMore && isLoadingOlder && (
         <div className="mb-4 flex justify-center">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-slate-400">
             <Loader2 size={14} className="animate-spin" />
             Loading older messages...
           </div>
@@ -152,7 +152,7 @@ const MessageList = ({
 
                 <p
                   className={`mt-1 text-[10px] ${
-                    isMine ? "text-blue-100" : "text-slate-500"
+                    isMine ? "text-blue-100" : "text-slate-400"
                   }`}
                 >
                   {format(new Date(message.createdAt), "hh:mm a")}

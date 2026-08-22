@@ -30,25 +30,39 @@ const UserSearch = ({ onConversationCreated }) => {
       return undefined;
     }
 
+    let cancelled = false;
+
     const timeoutId = setTimeout(async () => {
       try {
         setIsSearching(true);
 
         const data = await searchUsers(trimmedQuery);
 
+        if (cancelled) {
+          return;
+        }
+
         setUsers(Array.isArray(data) ? data : []);
       } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
         const message =
           error.response?.data?.error?.message || "Unable to search users.";
 
         toast.error(message);
         setUsers([]);
       } finally {
-        setIsSearching(false);
+        if (!cancelled) {
+          setIsSearching(false);
+        }
       }
     }, 350);
 
     return () => {
+      cancelled = true;
+
       clearTimeout(timeoutId);
     };
   }, [query]);
@@ -80,7 +94,7 @@ const UserSearch = ({ onConversationCreated }) => {
       <div className="relative">
         <Search
           size={17}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
         />
 
         <input
@@ -95,13 +109,13 @@ const UserSearch = ({ onConversationCreated }) => {
       {query.trim() && (
         <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-80 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
           {isSearching && (
-            <div className="px-4 py-5 text-center text-sm text-slate-500">
+            <div className="px-4 py-5 text-center text-sm text-slate-400">
               Searching...
             </div>
           )}
 
           {!isSearching && !displayUsers.length && (
-            <div className="px-4 py-5 text-center text-sm text-slate-500">
+            <div className="px-4 py-5 text-center text-sm text-slate-400">
               No users found.
             </div>
           )}
@@ -124,7 +138,7 @@ const UserSearch = ({ onConversationCreated }) => {
                     {user.name}
                   </p>
 
-                  <p className="truncate text-xs text-slate-500">
+                  <p className="truncate text-xs text-slate-400">
                     {user.phone}
                   </p>
                 </div>
