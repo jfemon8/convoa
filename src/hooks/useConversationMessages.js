@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { getConversationMessages } from "../services/conversation.service";
+import { normalizeMessage } from "../utils/message";
 
 const MESSAGE_PAGE_SIZE = 50;
 
@@ -34,7 +35,10 @@ const useConversationMessages = (conversationId) => {
 
             // Backend returns newest -> oldest.
             // Frontend stores oldest -> newest.
-            const normalizedMessages = [...incomingMessages].reverse();
+            const normalizedMessages = [...incomingMessages]
+                .reverse()
+                .map(normalizeMessage)
+                .filter(Boolean);
 
             setMessages(normalizedMessages);
             setHasMore(Boolean(response?.hasMore));
@@ -83,7 +87,10 @@ const useConversationMessages = (conversationId) => {
 
             // Backend returns newest -> oldest.
             // Normalize to oldest -> newest before prepending.
-            const olderMessages = [...olderMessagesFromApi].reverse();
+            const olderMessages = [...olderMessagesFromApi]
+                .reverse()
+                .map(normalizeMessage)
+                .filter(Boolean);
 
             setMessages((previousMessages) => {
                 const existingIds = new Set(
@@ -138,7 +145,10 @@ const useConversationMessages = (conversationId) => {
 
                 // Backend: newest -> oldest
                 // Frontend: oldest -> newest
-                const normalizedMessages = [...incomingMessages].reverse();
+                const normalizedMessages = [...incomingMessages]
+                    .reverse()
+                    .map(normalizeMessage)
+                    .filter(Boolean);
 
                 setMessages(normalizedMessages);
                 setHasMore(Boolean(response?.hasMore));

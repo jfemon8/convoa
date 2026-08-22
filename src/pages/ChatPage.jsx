@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { MessageSquare, Users } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 
@@ -8,13 +8,15 @@ import UserSearch from "../components/conversation/UserSearch";
 import { useAuth } from "../context/AuthContext";
 import useConversations from "../hooks/useConversations";
 import { useSocket } from "../context/useSocket";
+import { normalizeMessage } from "../utils/message";
 
 const ChatPage = () => {
   const { user, logout } = useAuth();
   const { conversationId } = useParams();
   const navigate = useNavigate();
 
-  const { conversations, isLoading, error, refetch } = useConversations();
+  const { conversations, setConversations, isLoading, error, refetch } =
+    useConversations();
 
   const selectedConversation = useMemo(
     () =>
@@ -30,17 +32,74 @@ const ChatPage = () => {
     refetch();
   }, [refetch]);
 
+  const conversationsRef = useRef(conversations);
+
+  useEffect(() => {
+    conversationsRef.current = conversations;
+  }, [conversations]);
+
+  const handleIncomingMessage = useCallback(
+    (incomingMessage) => {
+      const message = normalizeMessage(incomingMessage);
+
+      if (!message) {
+        return;
+      }
+
+      const isKnownConversation = conversationsRef.current.some(
+        (conversation) =>
+          String(conversation._id) === String(message.conversation),
+      );
+
+      if (!isKnownConversation) {
+        refetch();
+
+        return;
+      }
+
+      setConversations((previousConversations) => {
+        const index = previousConversations.findIndex(
+          (conversation) =>
+            String(conversation._id) === String(message.conversation),
+        );
+
+        if (index === -1) {
+          return previousConversations;
+        }
+
+        const updatedConversation = {
+          ...previousConversations[index],
+          lastMessage: {
+            text: message.text,
+            sender: message.sender,
+            createdAt: message.createdAt,
+          },
+          updatedAt: message.createdAt,
+        };
+
+        return [
+          updatedConversation,
+          ...previousConversations.slice(0, index),
+          ...previousConversations.slice(index + 1),
+        ];
+      });
+    },
+    [refetch, setConversations],
+  );
+
   useEffect(() => {
     if (!socket) {
       return undefined;
     }
 
     socket.on("conversation:updated", handleConversationUpdated);
+    socket.on("message:new", handleIncomingMessage);
 
     return () => {
       socket.off("conversation:updated", handleConversationUpdated);
+      socket.off("message:new", handleIncomingMessage);
     };
-  }, [socket, handleConversationUpdated]);
+  }, [socket, handleConversationUpdated, handleIncomingMessage]);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">

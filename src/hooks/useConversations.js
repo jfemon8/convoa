@@ -67,6 +67,7 @@ const useConversations = () => {
 
     return {
         conversations,
+        setConversations,
         isLoading,
         error,
         refetch: fetchConversations,

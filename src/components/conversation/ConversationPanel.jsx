@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import MessageList from "./MessageList";
 import { useSocket } from "../../context/useSocket";
 import GroupMembersPanel from "./GroupMembersPanel";
+import { normalizeMessage } from "../../utils/message";
 
 const ConversationPanel = ({ conversation, onConversationUpdated }) => {
   const { user } = useAuth();
@@ -27,8 +28,10 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
   } = useConversationMessages(conversationId);
 
   const addMessage = useCallback(
-    (message) => {
-      if (!message?._id) {
+    (incomingMessage) => {
+      const message = normalizeMessage(incomingMessage);
+
+      if (!message) {
         return;
       }
 
@@ -61,17 +64,14 @@ const ConversationPanel = ({ conversation, onConversationUpdated }) => {
       return undefined;
     }
 
-    const handleNewMessage = (message) => {
-      if (!message?._id) {
+    const handleNewMessage = (incomingMessage) => {
+      const message = normalizeMessage(incomingMessage);
+
+      if (!message) {
         return;
       }
 
-      const messageConversationId =
-        typeof message.conversation === "object"
-          ? message.conversation?._id
-          : message.conversation;
-
-      if (String(messageConversationId) !== String(conversationId)) {
+      if (String(message.conversation) !== String(conversationId)) {
         return;
       }
 

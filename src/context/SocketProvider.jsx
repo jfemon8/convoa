@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 import { useAuth } from "./AuthContext";
@@ -7,25 +7,23 @@ import SocketContext from "./SocketContext";
 const SocketProvider = ({ children }) => {
   const { token } = useAuth();
 
-  const socket = useMemo(() => {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
     if (!token) {
-      return null;
+      setSocket(null);
+
+      return undefined;
     }
 
-    return io(import.meta.env.VITE_SOCKET_URL, {
+    const instance = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token,
       },
     });
-  }, [token]);
-
-  useEffect(() => {
-    if (!socket) {
-      return undefined;
-    }
 
     const handleConnect = () => {
-      console.log("[Socket] Connected:", socket.id);
+      console.log("[Socket] Connected:", instance.id);
     };
 
     const handleDisconnect = (reason) => {
@@ -36,18 +34,22 @@ const SocketProvider = ({ children }) => {
       console.error("[Socket] Connection error:", error);
     };
 
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("connect_error", handleConnectError);
+    instance.on("connect", handleConnect);
+    instance.on("disconnect", handleDisconnect);
+    instance.on("connect_error", handleConnectError);
+
+    setSocket(instance);
 
     return () => {
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("connect_error", handleConnectError);
+      instance.off("connect", handleConnect);
+      instance.off("disconnect", handleDisconnect);
+      instance.off("connect_error", handleConnectError);
 
-      socket.disconnect();
+      instance.disconnect();
+
+      setSocket((current) => (current === instance ? null : current));
     };
-  }, [socket]);
+  }, [token]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

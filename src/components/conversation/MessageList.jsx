@@ -134,7 +134,7 @@ const MessageList = ({
 
       <div className="space-y-3">
         {messages.map((message) => {
-          const isMine = message.sender === currentUserId;
+          const isMine = String(message.sender) === String(currentUserId);
 
           return (
             <div
